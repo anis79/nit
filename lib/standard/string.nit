@@ -2262,6 +2262,12 @@ redef class Collection[E]
 	end
 
 	# Concatenate elements without separators
+	#
+	# ~~~
+	# assert [1,2,3].plain_to_s == "123"
+	# assert [11..13].plain_to_s  == "111213"
+	# assert (new Array[Int]).plain_to_s == "" # empty collection
+	# ~~~
 	fun plain_to_s: String
 	do
 		var s = new FlatBuffer
