@@ -36,6 +36,7 @@ shopt -u nullglob
 
 outdir="out"
 compdir="nit_compile"
+filelimit=100
 
 usage()
 {
@@ -63,13 +64,17 @@ saferun()
 	local stop=false
 	local o=
 	local a=
+	local s=
 	while [ $stop = false ]; do
 		case "$1" in
 			-o) o="$2"; shift; shift;;
 			-a) a="-a"; shift;;
+			-s) s="$2"; shift; shift;;
 			*) stop=true
 		esac
 	done
+	(
+	test -n "$s" && ulimit -f "$s"
 	if test -d "$1"; then
 		find $1 | sort
 	elif test -n "$TIME"; then
@@ -78,6 +83,7 @@ saferun()
 		if test -n "$a"; then echo 0 >> "$o"; else echo 0 > "$o"; fi
 		$TIMEOUT "$@"
 	fi
+	)
 }
 
 # Output a timestamp attribute for XML, or an empty line
@@ -600,7 +606,7 @@ END
 				echo "NIT_NO_STACK=1 $ff.bin" $args
 			fi
 			NIT_NO_STACK=1 LD_LIBRARY_PATH=$JNI_LIB_PATH \
-				saferun -a -o "$ff.time.out" "$ff.bin" $args < "$inputs" > "$ff.res" 2>"$ff.err"
+				saferun -s $filelimit -a -o "$ff.time.out" "$ff.bin" $args < "$inputs" > "$ff.res" 2>"$ff.err"
 			mv "$ff.time.out" "$ff.times.out"
 			awk '{ SUM += $1} END { print SUM }' "$ff.times.out" > "$ff.time.out"
 
@@ -645,7 +651,7 @@ END
 					echo -n "==> $name "
 					echo "$ff.bin $args" > "$fff.bin"
 					chmod +x "$fff.bin"
-					WRITE="$fff.write" saferun -o "$fff.time.out" sh -c "NIT_NO_STACK=1 $fff.bin < $ffinputs > $fff.res 2>$fff.err"
+					WRITE="$fff.write" saferun -s "$filelimit" -o "$fff.time.out" sh -c "NIT_NO_STACK=1 $fff.bin < $ffinputs > $fff.res 2>$fff.err"
 					if [ "x$verbose" = "xtrue" ]; then
 						cat -- "$fff.res"
 						cat >&2 -- "$fff.err"
