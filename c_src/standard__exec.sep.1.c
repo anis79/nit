@@ -3,12 +3,12 @@
 long standard__exec___Sys___system(val* self, val* p0) {
 long var /* : Int */;
 val* var_command /* var command: String */;
-char* var1 /* : NativeString */;
+unsigned char* var1 /* : NativeString */;
 long var2 /* : Int */;
 long var4 /* : Int for extern */;
 var_command = p0;
 {
-var1 = ((char* (*)(val* self))(var_command->class->vft[COLOR_standard__string__Text__to_cstring]))(var_command) /* to_cstring on <var_command:String>*/;
+var1 = ((unsigned char*(*)(val* self))(var_command->class->vft[COLOR_standard__string__Text__to_cstring]))(var_command); /* to_cstring on <var_command:String>*/
 }
 {
 { /* Inline exec#NativeString#system (var1) on <var1:NativeString> */
@@ -24,7 +24,7 @@ RET_LABEL:;
 return var;
 }
 /* method exec#NativeString#system for (self: NativeString): Int */
-long standard__exec___NativeString___system(char* self) {
+long standard__exec___NativeString___system(unsigned char* self) {
 long var /* : Int */;
 long var1 /* : Int for extern */;
 var1 = string_NativeString_NativeString_system_0(self);
